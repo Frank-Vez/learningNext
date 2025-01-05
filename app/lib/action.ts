@@ -36,6 +36,8 @@ export async function createInvoice(prevState: State, formData: FormData) {
     status: formData.get("status"),
   });
 
+  console.log(validatedFields);
+
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
@@ -44,11 +46,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
     };
   }
 
-  const { customerId, amount, status } = CreateInvoice.parse({
-    customerId: formData.get("customerId"),
-    amount: formData.get("amount"),
-    status: formData.get("status"),
-  });
+  const { customerId, amount, status } = validatedFields.data;
   const amountInCent = amount * 100;
   const date = new Date().toISOString().split("T")[0];
 
@@ -61,7 +59,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
       message: "Database Error: Failed to Create Invoice.",
     };
   }
-  console.log("should redirect now");
+
   revalidatePath("/dashboard/invoices");
   redirect("/dashboard/invoices");
 }
